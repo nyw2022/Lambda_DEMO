@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  demo-hello-world
+
+  Sample SAM Template for demo-hello-world
+  
+# Setting every lambda function timeout to 3 seconds  
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  FunctionURL:
+    Type: AWS::Serverless::Function # High level API
+    Properties:
+      CodeUri: hello-world/ # Folder
+      Handler: index.lambdaHandler # Entry point to your function code
+      Runtime: nodejs14.x # Runtime, can be Go, Python ...
+      # Lambda URL
+      FunctionUrlConfig:
+        AuthType: NONE # Public url Invoke, no permissions
+
+  APIGateway:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: hello-world/
+      Handler: index.lambdaHandler
+      Runtime: nodejs14.x
+      # API Gateway API
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+
+  Advanced:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: advanced/
+      Handler: index.lambdaHandler
+      Runtime: nodejs14.x
+      # Lambda URL
+      FunctionUrlConfig:
+        AuthType: NONE # Public url Invoke, no permissions
+
+Outputs:
+  HelloWorldApi:
+    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
